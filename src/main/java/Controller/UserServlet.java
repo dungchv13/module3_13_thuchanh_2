@@ -65,6 +65,12 @@ public class UserServlet extends HttpServlet {
                     addUserPermision(request, response);
 
                     break;
+                case "test-without-tran":
+
+                    testWithoutTran(request, response);
+                    break;
+
+
                 default:
                     listUser(request, response);
                     break;
@@ -72,6 +78,11 @@ public class UserServlet extends HttpServlet {
         } catch (SQLException ex) {
             throw new ServletException(ex);
         }
+    }
+
+    private void testWithoutTran(HttpServletRequest request, HttpServletResponse response) {
+        userDAO.insertUpdateWithoutTransaction();
+
     }
 
     private void addUserPermision(HttpServletRequest request, HttpServletResponse response) {
@@ -84,7 +95,8 @@ public class UserServlet extends HttpServlet {
 
     private void listUser(HttpServletRequest request, HttpServletResponse response)
             throws SQLException, IOException, ServletException {
-        List<User> listUser = userDAO.selectAllUsers();
+//        List<User> listUser = userDAO.selectAllUsers();
+        List<User> listUser = userDAO.selectAllUsersStore();
         request.setAttribute("listUser", listUser);
         RequestDispatcher dispatcher = request.getRequestDispatcher("user/list.jsp");
         dispatcher.forward(request, response);
@@ -124,8 +136,9 @@ public class UserServlet extends HttpServlet {
         String email = request.getParameter("email");
         String country = request.getParameter("country");
 
-        User book = new User(id, name, email, country);
-        userDAO.updateUser(book);
+//        User book = new User(id, name, email, country);
+//        userDAO.updateUser(book);
+        userDAO.updateUserStore(id,name,email,country);
         RequestDispatcher dispatcher = request.getRequestDispatcher("user/edit.jsp");
         dispatcher.forward(request, response);
     }
@@ -133,7 +146,9 @@ public class UserServlet extends HttpServlet {
     private void deleteUser(HttpServletRequest request, HttpServletResponse response)
             throws SQLException, IOException, ServletException {
         int id = Integer.parseInt(request.getParameter("id"));
-        userDAO.deleteUser(id);
+//        userDAO.deleteUser(id);
+        userDAO.deleteUserStore(id);
+
 
         List<User> listUser = userDAO.selectAllUsers();
         request.setAttribute("listUser", listUser);
